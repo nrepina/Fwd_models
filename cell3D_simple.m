@@ -6,6 +6,9 @@ cellsize_z= 8; %um
 %matrix_res= 0.05; %um
 
 %initialize object matrix
+%NA=0.65
+%res=0.4um (0.532/2*NA)
+%DoF=1.25um (0.532/NA^2)
 x=0:matrix_res:(cellsize_x-matrix_res);
 y=0:matrix_res:(cellsize_y-matrix_res);
 z=0:matrix_res:(cellsize_z-matrix_res);
@@ -42,28 +45,32 @@ object=1.33.*ones(length(x), length(y), length(z)); %object as refractive index;
 
 rad=[8,7.9,... %cell outer radius; cell inner radius (um)
     3.5,3.4,... %nucleus outer radius; nucleus outer radius
-    0.4,... %organelle cluster #1 radii
-    0.4,... %organelle cluster #2 radii
-    0.4]; %organelle cluster #4 radii;
+    0.4,... %organelle #1 radius
+    0.4,... %organelle #2 radius
+    0.4,... %organelle #3 radius
+    0.4]; %organelle #4 radius
 
 nr=[1.5,1.35,... %cell membrane refractive index (n) ; cytoplasm n
     1.5,1.35,... %nuclear membrane refractive index (n) ; inner nucleus n
-    1.5,... %organelle n (3-organelle cluster #1)
-    1.5,... %organelle n (3-organelle cluster #2)
-    1.5,... %organelle n (3-organelle cluster #3)
-    1.5]; %organelle n (3-organelle cluster #4)
+    1.5,... %organelle #1 n, res comparison
+    1.5,... %organelle #2 n, x res comparison
+    1.5,... %organelle #3 n, y res comparison
+    1.5]; %organelle #4 n, DoF
 
+%units in um
 cent=[mean(x),mean(y),mean(z);...
     mean(x),mean(y),mean(z);...
     
     mean(x)-0.8,mean(y)+.8,mean(z);...  
     mean(x)-0.8,mean(y)+.8,mean(z);...
     
-    mean(x)+2.8,mean(y),mean(z);...
+    %organelles separated by 1.6um
+    mean(x)+5,mean(y),mean(z);...
+    mean(x)+6.6,mean(y),mean(z);...    
+    mean(x)+5,mean(y)+1.6,mean(z);...
     
-    mean(x)-1.5,mean(y)-2.8,mean(z);...
-    
-    mean(x)+1.1,mean(y)+1,mean(z)+3];
+    %DoF 1.25um
+    mean(x),mean(y)-5,mean(z)+2.5];
 
 for ii=1:length(rad)
     object(sqrt((X-cent(ii,1)).^2 + (Y-cent(ii,2)).^2 + (Z-cent(ii,3)).^2)<rad(ii))=nr(ii);
